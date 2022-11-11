@@ -96,28 +96,28 @@ public class calculator extends JFrame implements ActionListener {
 				break;
 			// --action--
 			case "+":
-				if (!is_select_action) {
+				if (!is_select_action && label_text.length() > 0) {
 					action = "+";
 					set_value();
 					label_text += "+";
 				}
 				break;
 			case "-":
-				if (!is_select_action) {
+				if (!is_select_action && label_text.length() > 0) {
 					action = "-";
 					set_value();
 					label_text += "-";
 				}
 				break;
 			case "*":
-				if (!is_select_action) {
+				if (!is_select_action && label_text.length() > 0) {
 					action = "*";
 					set_value();
 					label_text += "*";
 				}
 				break;
 			case "/":
-				if (!is_select_action) {
+				if (!is_select_action && label_text.length() > 0) {
 					action = "/";
 					set_value();
 					label_text += "/";
@@ -125,8 +125,10 @@ public class calculator extends JFrame implements ActionListener {
 				break;
 			// --other--
 			case "=":
-				set_value();
-				do_count();
+				if (label_text.length() > 0) {
+					set_value();
+					do_count();
+				}
 				break;
 			case "C":
 				re_set();
@@ -180,7 +182,7 @@ public class calculator extends JFrame implements ActionListener {
 
 	private void undo() {
 		try {
-			if (!count_over) {
+			if (!count_over && label_text.length() > 0) {
 				// 遇到運算符號
 				if (label_text.substring(label_text.length() - 1, label_text.length()).equals(action)) {
 					action = "";
@@ -400,7 +402,7 @@ public class calculator extends JFrame implements ActionListener {
 
 	private void log_init() {
 		try {
-			log = new JLabel("0", JLabel.RIGHT);// 文字靠右顯示
+			log = new JLabel("", JLabel.RIGHT);// 文字靠右顯示
 			log.setPreferredSize(new Dimension(480, 100));// 設置標籤寬高
 			// log.setHorizontalTextPosition(JLabel.RIGHT);// 設置標籤文字在水平方向的對齊方式
 			// log.setVerticalTextPosition(JLabel.CENTER);// 設置標籤文字在垂直方向的對齊方式
