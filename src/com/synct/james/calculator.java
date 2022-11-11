@@ -24,6 +24,7 @@ public class calculator extends JFrame implements ActionListener {
 	private String label_text = "";
 	private String num_1, num_2 = "";
 	private String action = "";
+	private boolean is_select_action, count_over = false;
 
 	public calculator() {
 		// set_title
@@ -56,7 +57,7 @@ public class calculator extends JFrame implements ActionListener {
 			String ActionCommand = e.getActionCommand();
 
 			switch (ActionCommand) {
-			//--number--
+			// --number--
 			case "0":
 				label_text += "0";
 				break;
@@ -90,40 +91,51 @@ public class calculator extends JFrame implements ActionListener {
 			case "9":
 				label_text += "9";
 				break;
-			//--action--	
-			case "+":
-				
-				action = "+";
-				label_text += "+";
-				break;
-			case "-":
-				action = "-";
-				label_text += "-";
-				break;
-			case "*":
-				action = "*";
-				label_text += "*";
-				break;
-			case "/":
-				action = "/";
-				label_text += "/";
-				break;
-			case "undo":
-				break;
-			case "=":
-				label_text += "=";
-				do_count();
-				break;
-			case "C":
-				label_text = "";
-				break;
 			case ".":
 				label_text += ".";
 				break;
+			// --action--
+			case "+":
+				if (!is_select_action) {
+					action = "+";
+					set_value();
+					label_text += "+";
+				}
+				break;
+			case "-":
+				if (!is_select_action) {
+					action = "-";
+					set_value();
+					label_text += "-";
+				}
+				break;
+			case "*":
+				if (!is_select_action) {
+					action = "*";
+					set_value();
+					label_text += "*";
+				}
+				break;
+			case "/":
+				if (!is_select_action) {
+					action = "/";
+					set_value();
+					label_text += "/";
+				}
+				break;
+			// --other--
+			case "=":
+				set_value();
+				do_count();
+				break;
+			case "C":
+				re_set();
+				break;
+			case "undo":
+				undo();
+				break;
 			}
-
 			log.setText(label_text);
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -131,20 +143,67 @@ public class calculator extends JFrame implements ActionListener {
 
 	private void do_count() {
 		try {
-			double count = 0.0;
-			if (action == "+") {
-				count = Double.parseDouble(num_1) + Double.parseDouble(num_2);
+			if (!count_over) {
+				double count = 0.0;
+				if (action == "+") {
+					count = Double.parseDouble(num_1) + Double.parseDouble(num_2);
+				} else if (action == "-") {
+					count = Double.parseDouble(num_1) - Double.parseDouble(num_2);
+				} else if (action == "*") {
+					count = Double.parseDouble(num_1) * Double.parseDouble(num_2);
+				} else if (action == "/") {
+					count = Double.parseDouble(num_1) / Double.parseDouble(num_2);
+				}
+				label_text += "=";
 				label_text += count;
-			} else if (action == "-") {
-				count = Double.parseDouble(num_1) - Double.parseDouble(num_2);
-				label_text += count;
-			} else if (action == "*") {
-				count = Double.parseDouble(num_1) * Double.parseDouble(num_2);
-				label_text += count;
-			} else if (action == "/") {
-				count = Double.parseDouble(num_1) / Double.parseDouble(num_2);
-				label_text += count;
+				count_over = true;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void set_value() {
+		try {
+			if (is_select_action) {
+				num_2 = label_text.substring(label_text.lastIndexOf(action) + 1, label_text.length());
+			} else {
+				num_1 = label_text;
+				is_select_action = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void undo() {
+		try {
+			if (!count_over) {
+				// 遇到運算符號
+				if (label_text.substring(label_text.length() - 1, label_text.length()).equals(action)) {
+					action = "";
+					is_select_action = false;
+				}
+				label_text = label_text.substring(0, label_text.length() - 1);
+			}
+			log.setText(label_text);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void re_set() {
+		try {
+			num_1 = "";
+			num_2 = "";
+			is_select_action = false;
+			count_over = false;
+			action = "";
+			label_text = "";
+			log.setText(label_text);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
